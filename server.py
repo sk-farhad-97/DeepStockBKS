@@ -4,10 +4,8 @@ import signal
 from tornado.websocket import WebSocketHandler
 from tornado.web import RequestHandler, Application
 from tornado import httpserver, ioloop
-from websocket import create_connection
 import socket
 import subprocess
-import pika
 
 clients = dict()
 port = 8888
@@ -17,7 +15,7 @@ host = 'localhost'
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 MODEL_DIR = os.path.join(BASE_DIR, 'models')
 DATA_DIR = os.path.join(BASE_DIR, 'data')
-CURRENT_PROCESS = 1
+CURRENT_PROCESS = -1
 
 message_global = ""
 
@@ -66,7 +64,7 @@ class StartTrainingHandler(RequestHandler):
             process = subprocess.Popen(
                 [
                     'python3',
-                    "run_process.py",
+                    "start_training.py",
                     req_body['model'],
                     req_body['data'],
                     req_body['reward'],
@@ -92,21 +90,26 @@ class StartEvaluationHandler(RequestHandler):
     def post(self):
         global CURRENT_PROCESS
         req_body = json.loads(self.request.body.decode())
-        print(req_body)
-        process = subprocess.Popen(
-            [
-                'python3',
-                "evaluate_models.py",
-                req_body['model'],
-                req_body['data'],
-                req_body['symbol'],
-                req_body['test_ini'],
-                req_body['test_fi']
-            ],
-            stdout=subprocess.PIPE
-        )
-        CURRENT_PROCESS = process.pid
-        self.write("Evaluation started")
+        if CURRENT_PROCESS != -1:
+            print("Another Process running. PID: ", CURRENT_PROCESS)
+        else:
+            print(req_body)
+            process = subprocess.Popen(
+                [
+                    'python3',
+                    "start_evaluation.py",
+                    req_body['model'],
+                    req_body['data'],
+                    'unrealized_pnl',
+                    req_body['symbol'],
+                    req_body['test_ini'],
+                    req_body['test_fi'],
+                    "evaluate_models.py",
+                ],
+                stdout=subprocess.PIPE
+            )
+            CURRENT_PROCESS = process.pid
+            self.write("Evaluation started")
 
 
 class ListModelsHandler(RequestHandler):
@@ -156,8 +159,10 @@ class StopTrainingHandler(RequestHandler):
 
 application = Application([
     (r'/ws', WSHandler),
-    (r"/run", StartTrainingHandler),
-    (r"/stop", StopTrainingHandler),
+    (r"/run_training", StartTrainingHandler),
+    (r"/stop_training", StopTrainingHandler),
+    (r"/run_evaluation", StartEvaluationHandler),
+    (r"/stop_evaluation", StopTrainingHandler),
     (r"/home", HomeHandler),
     (r"/models", ListModelsHandler),
     (r"/datafiles", ListDataFilesHandler),

@@ -202,7 +202,7 @@
 
             $("#train_start").click(function(evt) {
                 evt.preventDefault();
-                var start_process = 'http://localhost:8888/run';
+                var start_process = 'http://localhost:8888/run_training';
                 var data = {
                     model: $('#train_model_btn').text(),
                     data: $('#train_file_btn').text(),
@@ -219,7 +219,28 @@
             });
             $("#train_stop").click(function(evt) {
                 evt.preventDefault();
-                 var stop_process = 'http://localhost:8888/stop';
+                 var stop_process = 'http://localhost:8888/stop_training';
+                 var data = {
+                     msg: "STOP"
+                 }
+                httpPostAsync(stop_process, data);
+            });
+            $("#eval_start").click(function(evt) {
+                evt.preventDefault();
+                var start_process = 'http://localhost:8888/run_evaluation';
+                var data = {
+                    model: $('#train_model_btn').text(),
+                    data: $('#train_file_btn').text(),
+                    reward: $('#train_reward_btn').text(),
+                    symbol: $('#stock_symbol').val(),
+                    test_ini: $('#test_ini').val(),
+                    test_fi: $('#test_fi').val()
+                }
+                httpPostAsync(start_process, data)
+            });
+            $("#eval_stop").click(function(evt) {
+                evt.preventDefault();
+                 var stop_process = 'http://localhost:8888/stop_evaluation';
                  var data = {
                      msg: "STOP"
                  }

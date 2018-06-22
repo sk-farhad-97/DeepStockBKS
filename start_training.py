@@ -3,6 +3,7 @@ import sys
 import os
 import signal
 from websocket import create_connection
+import requests
 
 PORT = 8888
 HOST = 'localhost'
@@ -71,10 +72,12 @@ def start_process():
 
     err = process.stderr.read()
     if err:
-        ws.send("$> Process finished! System output>")
+        ws.send("$> System output==>")
         ws.send("$> " + err.rstrip().decode("utf-8") + "\n")
+        ws.send("$> Process finished!!!")
     else:
         ws.send("$> Process finished!")
+    r = requests.post('http://' + HOST + ':' + str(PORT) + '/stop_training', data={'key': 'value'})
 
 
 if __name__ == "__main__":
