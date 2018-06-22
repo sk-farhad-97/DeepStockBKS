@@ -7,3 +7,4 @@ matplotlib
 websocket-client
 sklearn
 h5py
+requests

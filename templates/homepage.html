@@ -144,19 +144,30 @@
                     <div class="container">
                         <div class="jumbotron">
                             <div class="row row-centered">
-                                <form class="form-inline">
-                                    <div class="form-group">
-                                        <label for ="sql_query">INPUT SQL QUERIES</label>
-                                        <input type="text" class="form-control"
-                                            id="sql_query" style="height:150px ; width:300px ;">
+                                <div class="form-group row">
+                                    <div class="col-xs-4">
+                                        <label for="model_name">Model Name (will be replace if exists)</label>
+                                        <input class="form-control" id="model_name" type="text" value="stockfish_v1">
                                     </div>
-                                    <button type="submit" class="btn btn-success"> RUN</button>
-                                </form>
+                                    <div class="col-xs-4">
+                                        <label for="num_features">Number of Features</label>
+                                        <input class="form-control" id="num_features" type="text" value="6">
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <label for="dropout_value">Dropout Value</label>
+                                        <input class="form-control" id="dropout_value" type="text" value="0.5" placeholder="e.g. 0.2">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-xs-2">
+                                        <input type="submit" style="display: block"
+                                       class="btn btn-success" id="create_model" value="Create Model">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <div id="turorials_tab" class="tab-pane fade ">
                     <div class="container">
                         <div class="jumbotron">
@@ -172,8 +183,8 @@
                         </div>
                     </div>
                 </div>
+
             </div>
-        </div>
 
     <script   src="https://code.jquery.com/jquery-1.12.4.min.js"
               integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
@@ -235,6 +246,16 @@
                     symbol: $('#stock_symbol').val(),
                     test_ini: $('#test_ini').val(),
                     test_fi: $('#test_fi').val()
+                }
+                httpPostAsync(start_process, data)
+            });
+            $("#create_model").click(function(evt) {
+                evt.preventDefault();
+                var start_process = 'http://localhost:8888/create_model';
+                var data = {
+                    model_name: $('#model_name').val(),
+                    num_features: $('#num_features').val(),
+                    dropout_value: $('#dropout_value').val(),
                 }
                 httpPostAsync(start_process, data)
             });

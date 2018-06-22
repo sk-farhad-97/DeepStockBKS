@@ -8,19 +8,16 @@ import requests
 PORT = 8888
 HOST = 'localhost'
 
-if len(sys.argv) < 8:
+if len(sys.argv) < 5:
     ws = create_connection("ws://" + str(HOST) + ":" + str(PORT) + "/ws")
     ws.send("$> Incomplete arguments! exiting.........")
     exit(1)
 
 
 MODEL_NAME = sys.argv[1]
-DATA_FILE = sys.argv[2]
-REWARD_FUNC = sys.argv[3]
-SYMBOL = sys.argv[4]
-TEST_INI = sys.argv[5]
-TEST_FI = sys.argv[6]
-file_name = sys.argv[7]
+NUM_FEATURES = sys.argv[2]
+DROPOUT = sys.argv[3]
+file_name = sys.argv[4]
 
 
 class GracefulKiller:
@@ -42,18 +39,15 @@ def start_process():
             'python3',
             file_name,
             MODEL_NAME,
-            DATA_FILE,
-            REWARD_FUNC,
-            SYMBOL,
-            TEST_INI,
-            TEST_FI,
+            NUM_FEATURES,
+            DROPOUT
         ],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
 
     pid = process.pid
-    ws.send("$> Evaluation Started with id: " + str(pid))
+    ws.send("$> Model creation Started with id: " + str(pid))
     line = process.stdout.readline()
     while line:
         if killer.kill_now:
@@ -66,9 +60,9 @@ def start_process():
     if err:
         ws.send("$> System output==>")
         ws.send("$> " + err.rstrip().decode("utf-8") + "\n")
-        ws.send("$> Evaluation finished!!!")
+        ws.send("$> Model creation finished!!!")
     else:
-        ws.send("$> Evaluation finished!")
+        ws.send("$> Model creation finished!")
     r = requests.post('http://'+HOST + ':' + str(PORT) + '/stop_training', data={'key': 'value'})
 
 

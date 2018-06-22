@@ -112,6 +112,32 @@ class StartEvaluationHandler(RequestHandler):
             self.write("Evaluation started")
 
 
+class CreateModelHandler(RequestHandler):
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+
+    def post(self):
+        global CURRENT_PROCESS
+        req_body = json.loads(self.request.body.decode())
+        if CURRENT_PROCESS != -1:
+            print("Another Process running. PID: ", CURRENT_PROCESS)
+        else:
+            print(req_body)
+            process = subprocess.Popen(
+                [
+                    'python3',
+                    "create_model.py",
+                    req_body['model_name'],
+                    req_body['num_features'],
+                    req_body['dropout_value'],
+                    "model_factory.py",
+                ],
+                stdout=subprocess.PIPE
+            )
+            CURRENT_PROCESS = process.pid
+            self.write("Model creation started")
+
+
 class ListModelsHandler(RequestHandler):
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
@@ -163,6 +189,7 @@ application = Application([
     (r"/stop_training", StopTrainingHandler),
     (r"/run_evaluation", StartEvaluationHandler),
     (r"/stop_evaluation", StopTrainingHandler),
+    (r"/create_model", CreateModelHandler),
     (r"/home", HomeHandler),
     (r"/models", ListModelsHandler),
     (r"/datafiles", ListDataFilesHandler),

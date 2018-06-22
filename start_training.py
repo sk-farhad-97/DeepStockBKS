@@ -61,7 +61,7 @@ def start_process():
     )
 
     pid = process.pid
-    ws.send("$> Process Started with id: " + str(pid))
+    ws.send("$> Training Started with id: " + str(pid))
     line = process.stdout.readline()
     while line:
         if killer.kill_now:
@@ -74,9 +74,9 @@ def start_process():
     if err:
         ws.send("$> System output==>")
         ws.send("$> " + err.rstrip().decode("utf-8") + "\n")
-        ws.send("$> Process finished!!!")
+        ws.send("$> Training finished!!!")
     else:
-        ws.send("$> Process finished!")
+        ws.send("$> Training finished!")
     r = requests.post('http://' + HOST + ':' + str(PORT) + '/stop_training', data={'key': 'value'})
 
 

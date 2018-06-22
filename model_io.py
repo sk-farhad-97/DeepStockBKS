@@ -13,10 +13,10 @@ def save_model(model, file_path, name):
         # serialize weights to HDF5
         full_dir_path = os.path.join(file_path, name + ".h5")
         model.save_weights(full_dir_path)
-        return False
+        return True
     except:
         print('Saving model failed!!')
-        return True
+        return False
 
 
 def load_model(file_path, name):
