@@ -1,0 +1,303 @@
+<html>
+    <head>
+        <meta charset="=utf-8">
+        <title>Data Science Interface</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+              integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+              crossorigin="anonymous">
+
+       <!--optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
+              integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r"
+              crossorigin="anonymous">
+        <style type="text/css">
+            .tab-collection{
+                margin:20px;
+            }
+            .row-centered{
+                text-align: center;
+                padding-bottom: 10px;
+            }
+            .fixed-msg-area{
+                overflow-y: scroll;
+                height: 280px;
+                resize: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div class ="tab-collection">
+            <ul class="nav nav-tabs">
+                <li ><a class="active" data-toggle="tab" href="#train_tab">TRAIN AND EVALUATE</a></li>
+                <li ><a class="tab" data-toggle="tab" href="#model_factory_tab">MODEL FACTORY</a></li>
+                <li ><a class="tab" data-toggle="tab" href="#turorials_tab">TUTORIALS</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div id="train_tab" class="tab-pane fade active">
+                    <div class="container">
+                        <div class="jumbotron">
+                            <div class="center">
+                                <div class="form-group row">
+                                    <div class="col-xs-2">
+                                        <input type="submit" style="display: block"
+                                       class="btn btn-success" id="reload_items" value="Reload Files">
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <label for="train_model_btn">Select Model</label>
+                                        <div style="display: inline" class="dropdown">
+                                          <button class="btn btn-default dropdown-toggle"
+                                                  type="button" id="train_model_btn" data-toggle="dropdown"
+                                                  aria-haspopup="true" aria-expanded="true">none<span class="caret"></span></button>
+                                          <ul class="dropdown-menu" id="train_model_list" aria-labelledby="dropdownMenu1"></ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-3">
+                                        <label for="train_file_btn">Data file</label>
+                                        <div style="display: inline" class="dropdown">
+                                          <button class="btn btn-default dropdown-toggle"
+                                                  type="button" id="train_file_btn" data-toggle="dropdown"
+                                                  aria-haspopup="true" >none<span class="caret"></span></button>
+                                          <ul class="dropdown-menu" id="train_file_list" aria-labelledby="dropdownMenu1">
+                                          </ul>
+                                      </div>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <label for="train_reward_btn">Reward Function</label>
+                                        <div style="display: inline" class="dropdown">
+                                          <button class="btn btn-default dropdown-toggle"
+                                                  type="button" id="train_reward_btn" data-toggle="dropdown"
+                                                  aria-haspopup="true" >valid_sequence<span class="caret"></span></button>
+                                          <ul class="dropdown-menu" id="train_reward_list" aria-labelledby="dropdownMenu1">
+                                            <li><a href="#">valid_sequence</a></li>
+                                            <li><a href="#">unrealized_pnl</a></li>
+                                          </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p> <br/></p>
+                                <div class="form-group row">
+                                  <div class="col-xs-3">
+                                    <label for="stock_symbol">Stock Symbol</label>
+                                    <input class="form-control" id="stock_symbol" type="text" value="ACV">
+                                  </div>
+                                  <div class="col-xs-3">
+                                    <label for="train_ini">Initial Index Train Data</label>
+                                    <input class="form-control" id="train_ini" type="text" value="0">
+                                  </div>
+                                  <div class="col-xs-3">
+                                    <label for="train_fi">Final Index Train Data</label>
+                                    <input class="form-control" id="train_fi" type="text" value="250">
+                                  </div>
+                                </div>
+
+                                <div class="form-group row">
+                                  <div class="col-xs-3">
+                                    <label for="train_iterations">Total Epoch</label>
+                                    <input class="form-control" id="train_iterations" type="text" value="100">
+                                  </div>
+                                  <div class="col-xs-3">
+                                    <label for="test_ini">Initial Index Test Data</label>
+                                    <input class="form-control" id="test_ini" type="text" value="150">
+                                  </div>
+                                  <div class="col-xs-3">
+                                    <label for="test_fi">Final Index Test Data</label>
+                                    <input class="form-control" id="test_fi" type="text" value="200">
+                                  </div>
+                                </div>
+                                <div class="form-group row">
+                                  <div class="col-xs-9">
+                                    <label for="train_features">Feature List (comma separated)</label>
+                                    <input class="form-control" id="train_features" type="text"
+                                           value="m3,m3_to_m1,m1_to_p1,p1_to_p3,p3">
+                                  </div>
+                                </div>
+
+                                <div class="form-group row">
+                                  <div class="col-xs-4">
+                                    <h5>Training</h5>
+                                    <input type="submit" class="btn btn-success" id="train_start" value="Start Training">
+                                    <input type="submit" class="btn btn-DANGER" id="train_stop" value="Stop Training">
+                                  </div>
+                                  <div class="col-xs-4">
+                                    <h5>Evaluation</h5>
+                                    <input type="submit" class="btn btn-success" id="eval_start" value="Start Evaluation">
+                                    <input type="submit" class="btn btn-DANGER" id="eval_stop" value="Stop Evaluation">
+                                  </div>
+                                </div>
+
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title" id="status">DIS-CONNECTED</h3>
+                                    </div>
+                                    <div class="panel-body fixed-msg-area" id='msg_txt'
+                                         style="background: black; color: chartreuse">Outputs:</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="model_factory_tab" class="tab-pane fade ">
+                    <div class="container">
+                        <div class="jumbotron">
+                            <div class="row row-centered">
+                                <form class="form-inline">
+                                    <div class="form-group">
+                                        <label for ="sql_query">INPUT SQL QUERIES</label>
+                                        <input type="text" class="form-control"
+                                            id="sql_query" style="height:150px ; width:300px ;">
+                                    </div>
+                                    <button type="submit" class="btn btn-success"> RUN</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="turorials_tab" class="tab-pane fade ">
+                    <div class="container">
+                        <div class="jumbotron">
+                            <div class="row row-centered">
+                                <form class="form-inline">
+                                    <div class="form-group">
+                                        <label for="anomaly_check"> ANOMALY DETECTION</label>
+                                        <input type="text" class="form-control" id="anomaly_check"placeholder="YOUR CSV FILE">
+                                        <button type="submit"class="btn btn-success">CHECK</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <script   src="https://code.jquery.com/jquery-1.12.4.min.js"
+              integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+              crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            console.log('init....');
+            var ws;
+            var port = '8888';
+            var uri = '/ws';
+            ws = new WebSocket("ws://127.0.0.1:" + port + uri);
+            ws.onmessage = function(evt) {
+              $("#msg_txt").append('</br>' + evt.data);
+              document.getElementById("msg_txt").scrollTop = document.getElementById("msg_txt").scrollHeight;
+            };
+            ws.onclose = function(evt) {
+              $("#status").html("Dis-connected");
+              $("#eval_console").html("DIS-CONNECTED");
+            };
+            ws.onopen = function(evt) {
+              $("#status").html("CONNECTED");
+              $("#eval_console").html("CONNECTED");
+            };
+
+            $("#train_start").click(function(evt) {
+                evt.preventDefault();
+                var start_process = 'http://localhost:8888/run';
+                var data = {
+                    model: $('#train_model_btn').text(),
+                    data: $('#train_file_btn').text(),
+                    reward: $('#train_reward_btn').text(),
+                    symbol: $('#stock_symbol').val(),
+                    train_ini: $('#train_ini').val(),
+                    train_fi: $('#train_fi').val(),
+                    test_ini: $('#test_ini').val(),
+                    test_fi: $('#test_fi').val(),
+                    epoch: $('#train_iterations').val(),
+                    feature_list: $('#train_features').val()
+                }
+                httpPostAsync(start_process, data)
+            });
+            $("#train_stop").click(function(evt) {
+                evt.preventDefault();
+                 var stop_process = 'http://localhost:8888/stop';
+                 var data = {
+                     msg: "STOP"
+                 }
+                httpPostAsync(stop_process, data);
+            });
+            $("#train_reward_list a").on('click', function(e){
+                e.preventDefault(); // cancel the link behaviour
+                var selText = $(this).text();
+                $("#train_reward_btn").text(selText);
+            });
+            $("#reload_items").click(function(e){
+                e.preventDefault(); // cancel the link behaviour
+                httpGetAsync('http://localhost:8888/models', get_models, 'train_model_list')
+                httpGetAsync('http://localhost:8888/datafiles', get_data_files, 'train_file_list')
+            });
+        });
+
+        function httpGetAsync(theUrl, callback, element_id) {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = function() {
+                if (xmlHttp.readyState == 4 && xmlHttp.status == 200){
+                    // console.log(xmlHttp.responseText);
+                    var respObj = JSON.parse(xmlHttp.responseText);
+                    callback(respObj, element_id);
+                }
+            }
+            xmlHttp.open("GET", theUrl, true); // true for asynchronous
+            xmlHttp.send(null);
+        }
+
+        function httpPostAsync(theUrl, data) {
+            // construct an HTTP request
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", theUrl, true);
+            xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+
+            // send the collected data as JSON
+            console.log(data);
+            xhr.send(JSON.stringify(data));
+            xhr.onloadend = function () {
+                console.log('Done!')
+            };
+        }
+
+
+        function get_models(model_list, element_id) {
+            $("#" + element_id).html('');
+            model_list['model_list'].forEach(function(item){
+                var model_name = item.replace(/\.[^/.]+$/, "");
+                $("#" + element_id).append(
+                    '<li><a id="'+ model_name +'">' + model_name + '</a></li>');
+                $('#'+model_name).on(
+                        'click', function(e){
+                        e.preventDefault(); // cancel the link behaviour
+                        var selText = $(this).text();
+                        $("#train_model_btn").text(selText);
+                    });
+                console.log(model_name);
+            });
+        }
+
+        function get_data_files(file_list, element_id) {
+            $("#" + element_id).html('');
+            file_list['file_list'].forEach(function(item){
+                var file_name = item.replace(/\.[^/.]+$/, "");
+                $("#" + element_id).append(
+                    '<li><a id="'+ file_name +'">' + file_name + '</a></li>');
+                $('#'+file_name).on(
+                        'click', function(e){
+                        e.preventDefault(); // cancel the link behaviour
+                        var selText = $(this).text();
+                        $("#train_file_btn").text(selText);
+                    });
+                console.log(file_name);
+            });
+        }
+
+
+    </script>
+    </body>
+</html>

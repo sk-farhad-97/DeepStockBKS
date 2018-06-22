@@ -1,0 +1,9 @@
+tensorflow
+tornado
+keras
+numpy
+pandas
+matplotlib
+websocket-client
+sklearn
+h5py
