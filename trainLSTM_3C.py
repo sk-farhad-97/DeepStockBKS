@@ -81,6 +81,7 @@ for i in range(epochs):
         # Observe reward
         reward = get_reward(REWARD_FUNC, new_trade_info, time_step, new_action, signal, price_data, terminal_state)
         # Get max_Q(S',a)
+        # print(reward)
 
         new_state = new_xdata_trf[time_step:time_step + 1, 0:1, :]
 
@@ -95,7 +96,7 @@ for i in range(epochs):
     eval_reward, cash_gained, predictions = evaluate_Q(FEATURE_LIST, test_data, MODEL, i)
     # print(predictions)
     learning_progress.append((eval_reward))
-    print("Epoch #: %s Reward: %f Cash: %f" % (i, eval_reward, cash_gained))
+    print("Epoch #: {0}; Evaluated Reward: {1}; Actual Return: {2} %".format(i, eval_reward, ((cash_gained - INIT_CASH)/INIT_CASH)*100))
     # learning_progress.append((reward))
     save_model(MODEL, model_path, MODEL_NAME)
     if epsilon > 0.1:  # decrement epsilon over time

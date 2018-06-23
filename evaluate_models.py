@@ -1,9 +1,9 @@
 import sys
 import os
-from datetime import datetime
+# from datetime import datetime
 import pandas as pd
 from model_io import load_model
-from config import output_path
+from config import output_path, INIT_CASH
 from StockLSTMmethods_3C import evaluate_Q, load_data_eval
 
 if len(sys.argv) < 8:
@@ -44,6 +44,9 @@ predictions = pd.Series(v for v in predictions)
 test_data = test_data.assign(actions=predictions.values)
 file_name = MODEL_NAME + '_' + DATA_FILE.split('.')[0] + '_' + TEST_INI + '_to_' + TEST_FI + '.csv'
 test_data.to_csv(os.path.join(output_path, file_name), sep='\t', encoding='utf-8')
+print('Actual Return: ' + str(((cash_gained - INIT_CASH)/INIT_CASH)*100) + ' %')
+print('Evaluated Reward: ' + str(eval_reward))
+print('Output file saved to output folder.')
 
 
 

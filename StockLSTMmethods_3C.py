@@ -1,40 +1,23 @@
-# -*- coding: utf-8 -*-
 from __future__ import print_function
-
 import numpy as np
 import os
-
-np.random.seed(1335)  # for reproducibility
-np.set_printoptions(precision=5, suppress=True, linewidth=150)
-
 import pandas as pd
 import backtest as twp
 from matplotlib import pyplot as plt
 from sklearn import metrics, preprocessing
 from sklearn.externals import joblib
-from reward_factory import reward_function, reward_function_strategy
-
+from reward_factory import reward_function, reward_function_urpnl
+from config import STOCK_SLOT, INIT_CASH
 # import quandl
 # import talib
 
-STOCK_SLOT = 100
+np.random.seed(1335)  # for reproducibility
+np.set_printoptions(precision=5, suppress=True, linewidth=150)
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
 # Load data
-def load_data(test=False):
-    df = pd.read_csv(os.path.join(dir_path, 'data', 'RL_data.csv'))
-    data = df.loc[df['Symbol'] == 'ACV']
-
-    x_train = data.iloc[:150,]
-    x_test= data.iloc[200:250,]
-    if test:
-        return x_test
-    else:
-        return x_train
-
-
 def load_data_v2(file_name, stock_sym, train_range, test_range, test=False):
     df = pd.read_csv(os.path.join(dir_path, 'data', file_name))
     data = df.loc[df['Symbol'] == stock_sym]
@@ -63,46 +46,11 @@ def get_state(xdata, t_step):
 
 
 # Initialize first state, all items are placed deterministically
-def init_state(indata, test=False):
-    close = indata['Close'].values.astype(float) # convert to float for ndarray
-    buy_price = np.zeros(len(close))
-    cash = np.empty(len(close))
-    cash.fill(100000)
-    status = np.empty(len(close))
-    status.fill(0)
-    m3 = indata['m3'].values.astype(float)
-    m3_to_m1 = indata['m3_to_m1'].values.astype(float)
-    m1_to_p1 = indata['m1_to_p1'].values.astype(float)
-    p1_to_p3 = indata['p1_to_p3'].values.astype(float)
-    p3 = indata['p3'].values.astype(float)
-    exp_wl = indata['exp_wl'].values.astype(float)
-    vix = indata['Vix'].values.astype(float)
-
-    #--- Preprocess data
-    trade_info = np.column_stack((close, buy_price, cash))
-    xdata = np.column_stack((status, m3, m3_to_m1, m1_to_p1, p1_to_p3, p3))
-    #xdata = np.column_stack((status, status))
-    trade_info = np.nan_to_num(trade_info)
-    xdata = np.nan_to_num(xdata)
-    xdata_trf = None
-    if test == False:
-        scaler = preprocessing.StandardScaler()
-        xdata_trf = np.expand_dims(scaler.fit_transform(xdata), axis=1)
-        joblib.dump(scaler, 'data/scaler.pkl')
-    elif test == True:
-        scaler = joblib.load('data/scaler.pkl')
-        xdata_trf = np.expand_dims(scaler.fit_transform(xdata), axis=1)
-
-    state = xdata_trf[0:1, 0:1, :]
-
-    return state, trade_info, xdata_trf, close
-
-
 def init_state_v2(indata, columns, test=False):
     close = indata['Close'].values.astype(float) # convert to float for ndarray
     buy_price = np.zeros(len(close))
     cash = np.empty(len(close))
-    cash.fill(100000)
+    cash.fill(INIT_CASH)
     status = np.empty(len(close))
     status.fill(0)
 
@@ -187,7 +135,7 @@ def get_reward(REWARD_FUNC, trade_info, time_step, action, price_data, signal, t
     if REWARD_FUNC == 'valid_sequence':
         reward = reward_function(action, trade_info, time_step, STOCK_SLOT)
     if REWARD_FUNC == 'unrealized_pnl':
-        reward = reward_function_strategy(action, trade_info, time_step, STOCK_SLOT)
+        reward = reward_function_urpnl(action, trade_info, time_step, STOCK_SLOT)
 
     if terminal_state == 1 and eval:
         print('Saving plot.....')
