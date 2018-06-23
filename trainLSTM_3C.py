@@ -93,7 +93,7 @@ for i in range(epochs):
             xdata_trf = new_xdata_trf
             time_step += 1
     print('Evaluating............')
-    eval_reward, cash_gained, predictions = evaluate_Q(FEATURE_LIST, test_data, MODEL, i)
+    eval_reward, cash_gained, predictions = evaluate_Q(FEATURE_LIST, test_data, MODEL, i, eval=True)
     # print(predictions)
     learning_progress.append((eval_reward))
     print("Epoch #: {0}; Evaluated Reward: {1}; Actual Return: {2} %".format(i, eval_reward, ((cash_gained - INIT_CASH)/INIT_CASH)*100))
