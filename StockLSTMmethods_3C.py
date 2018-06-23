@@ -190,7 +190,7 @@ def get_reward(REWARD_FUNC, trade_info, time_step, action, price_data, signal, t
         reward = reward_function_strategy(action, trade_info, time_step, STOCK_SLOT)
 
     if terminal_state == 1 and eval:
-        print('Plotting..')
+        print('Saving plot.....')
         # save a figure of the test set
         signal = pd.Series(data=[x for x in signal], index=np.arange(len(signal)))
         bt = twp.Backtest(pd.Series(data=[x for x in price_data], index=signal.index.values),
@@ -206,9 +206,9 @@ def get_reward(REWARD_FUNC, trade_info, time_step, action, price_data, signal, t
     return reward
 
 
-def evaluate_Q(eval_data, eval_model, epoch=0):
+def evaluate_Q(FEATURE_LIST, eval_data, eval_model, epoch=0):
     signal = np.zeros(len(eval_data))
-    state, trade_info, xdata_trf, price_data = init_state(eval_data)
+    state, trade_info, xdata_trf, price_data = init_state_v2(eval_data, FEATURE_LIST)
     terminal_state = 0
     time_step = 1
     eval_reward = 0

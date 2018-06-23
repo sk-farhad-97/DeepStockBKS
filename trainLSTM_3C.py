@@ -1,14 +1,14 @@
 import sys
 import random, timeit
 from keras.optimizers import Adam
-from model_factory import create_model, CHOICES
 from memory_replay import exp_replay
 from model_io import save_model, load_model
 from StockLSTMmethods_3C import *
+from config import CHOICES, model_path
 
 
 if len(sys.argv) < 11:
-    print('Usage: python3 trainLSTM_3C.py $model_name $datafile_name $reward_func $symbol $train_ini $train_fi $test_ini $test_fi')
+    print('Incomplete arguments!')
     print('Available reward functions: valid_seq, strategy')
     exit(1)
 
@@ -34,14 +34,11 @@ if int(EPOCH) > 0:
     epochs = int(EPOCH)
 
 if len(FEATURE_LIST) < 1:
-    FEATURE_LIST = ['m3', 'm3_to_m1']
     print('Empty feature list!')
     exit(1)
 else:
     print('Feature list: ' + FEATURE_LIST)
     FEATURE_LIST = FEATURE_LIST.split(',')
-
-model_path = 'models/'
 
 MODEL = load_model(model_path, MODEL_NAME)
 if not MODEL:
@@ -95,7 +92,7 @@ for i in range(epochs):
             xdata_trf = new_xdata_trf
             time_step += 1
     print('Evaluating............')
-    eval_reward, cash_gained, predictions = evaluate_Q(test_data, MODEL, i)
+    eval_reward, cash_gained, predictions = evaluate_Q(FEATURE_LIST, test_data, MODEL, i)
     # print(predictions)
     learning_progress.append((eval_reward))
     print("Epoch #: %s Reward: %f Cash: %f" % (i, eval_reward, cash_gained))

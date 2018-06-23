@@ -172,13 +172,11 @@
                     <div class="container">
                         <div class="jumbotron">
                             <div class="row row-centered">
-                                <form class="form-inline">
-                                    <div class="form-group">
-                                        <label for="anomaly_check"> ANOMALY DETECTION</label>
-                                        <input type="text" class="form-control" id="anomaly_check"placeholder="YOUR CSV FILE">
-                                        <button type="submit"class="btn btn-success">CHECK</button>
-                                    </div>
-                                </form>
+                                <div>
+                                    <p>
+                                        Tutorials will be added later...
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -245,7 +243,8 @@
                     reward: $('#train_reward_btn').text(),
                     symbol: $('#stock_symbol').val(),
                     test_ini: $('#test_ini').val(),
-                    test_fi: $('#test_fi').val()
+                    test_fi: $('#test_fi').val(),
+                    feature_list: $('#train_features').val()
                 }
                 httpPostAsync(start_process, data)
             });

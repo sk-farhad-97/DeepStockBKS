@@ -4,11 +4,10 @@ from keras.layers.core import Dense, Dropout, Activation
 from keras.layers.recurrent import LSTM
 from keras.optimizers import RMSprop, Adam
 from model_io import save_model
+from config import CHOICES, model_path
 
-CHOICES = 3
 NUM_FEATURES = 6 # number of rows in init_state() xdata
-# DROPOUT = 0.5
-model_path = 'models/'
+DROPOUT = 0.5
 
 if len(sys.argv) > 1:
     MODEL_NAME = sys.argv[1]

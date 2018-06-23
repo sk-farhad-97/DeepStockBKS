@@ -8,7 +8,7 @@ import requests
 PORT = 8888
 HOST = 'localhost'
 
-if len(sys.argv) < 8:
+if len(sys.argv) < 9:
     ws = create_connection("ws://" + str(HOST) + ":" + str(PORT) + "/ws")
     ws.send("$> Incomplete arguments! exiting.........")
     exit(1)
@@ -20,7 +20,8 @@ REWARD_FUNC = sys.argv[3]
 SYMBOL = sys.argv[4]
 TEST_INI = sys.argv[5]
 TEST_FI = sys.argv[6]
-file_name = sys.argv[7]
+FEATURE_LIST = sys.argv[7]
+file_name = sys.argv[8]
 
 
 class GracefulKiller:
@@ -47,6 +48,7 @@ def start_process():
             SYMBOL,
             TEST_INI,
             TEST_FI,
+            FEATURE_LIST,
         ],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE

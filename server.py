@@ -104,6 +104,7 @@ class StartEvaluationHandler(RequestHandler):
                     req_body['symbol'],
                     req_body['test_ini'],
                     req_body['test_fi'],
+                    req_body['feature_list'],
                     "evaluate_models.py",
                 ],
                 stdout=subprocess.PIPE
@@ -174,11 +175,12 @@ class StopTrainingHandler(RequestHandler):
 
     def post(self):
         global CURRENT_PROCESS
-        print('Open process: ', CURRENT_PROCESS)
         if CURRENT_PROCESS != -1:
             os.kill(CURRENT_PROCESS, signal.SIGTERM)
             print('Stopped: ', CURRENT_PROCESS)
             CURRENT_PROCESS = -1
+        else:
+            print('No process found!')
 
         self.write('STOP')
 
