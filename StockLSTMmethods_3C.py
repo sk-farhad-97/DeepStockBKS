@@ -133,7 +133,7 @@ def init_state_v2(indata, columns, test=False):
 # Take Action
 def take_action(trade_info, xdata_trf, action, signal, time_step, eval_data=False):
 
-    if time_step + 2 == trade_info.shape[0]:
+    if time_step + 1 >= trade_info.shape[0]:
         terminal_state = 1
         signal[time_step] = 0
         return trade_info, xdata_trf, 2, signal, terminal_state
@@ -206,7 +206,7 @@ def get_reward(REWARD_FUNC, trade_info, time_step, action, price_data, signal, t
     return reward
 
 
-def evaluate_Q(FEATURE_LIST, eval_data, eval_model, epoch=0):
+def evaluate_Q(FEATURE_LIST, eval_data, eval_model, epoch=0, eval=False):
     signal = np.zeros(len(eval_data))
     state, trade_info, xdata_trf, price_data = init_state_v2(eval_data, FEATURE_LIST)
     terminal_state = 0
@@ -223,10 +223,15 @@ def evaluate_Q(FEATURE_LIST, eval_data, eval_model, epoch=0):
             take_action(trade_info, xdata_trf, action, signal, time_step,  eval_data=True)
         # Observe reward
         # trade_info, time_step, action, price_data, signal, terminal_state,
-        eval_reward += get_reward('unrealized_pnl', trade_info, time_step, action, price_data, signal, terminal_state, eval=True,
+        eval_reward += get_reward('unrealized_pnl', trade_info, time_step, action, price_data, signal, terminal_state, eval=eval,
                                  epoch=epoch)
         state = xdata_trf[time_step:time_step + 1, 0:1, :]
         if terminal_state == 0:  # terminal state
             time_step += 1
+        else:
+            qval = eval_model.predict(state, batch_size=1)
+            action = (np.argmax(qval))
+            # Take action, observe new state S'
+            predictions.append(choices[action])
 
     return eval_reward, trade_info[time_step - 1][2], predictions
