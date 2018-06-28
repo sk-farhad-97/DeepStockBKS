@@ -4,6 +4,7 @@ import os
 import signal
 from websocket import create_connection
 import requests
+from config import python_comm
 
 PORT = 8888
 HOST = 'localhost'
@@ -40,7 +41,7 @@ def start_process():
     ws = create_connection("ws://" + str(HOST) + ":" + str(PORT) + "/ws")
     process = subprocess.Popen(
         [
-            'python3',
+            python_comm,
             file_name,
             MODEL_NAME,
             DATA_FILE,

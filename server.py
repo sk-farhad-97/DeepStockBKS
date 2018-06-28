@@ -6,6 +6,7 @@ from tornado.web import RequestHandler, Application
 from tornado import httpserver, ioloop
 import socket
 import subprocess
+from config import python_comm, output_path, model_path
 
 clients = dict()
 port = 8888
@@ -13,7 +14,7 @@ host = 'localhost'
 
 '''rabbit MQ codes'''
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
-MODEL_DIR = os.path.join(BASE_DIR, 'models')
+MODEL_DIR = os.path.join(BASE_DIR, model_path)
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 CURRENT_PROCESS = -1
 
@@ -63,7 +64,7 @@ class StartTrainingHandler(RequestHandler):
             print(req_body)
             process = subprocess.Popen(
                 [
-                    'python3',
+                    python_comm,
                     "start_training.py",
                     req_body['model'],
                     req_body['data'],
@@ -96,7 +97,7 @@ class StartEvaluationHandler(RequestHandler):
             print(req_body)
             process = subprocess.Popen(
                 [
-                    'python3',
+                    python_comm,
                     "start_evaluation.py",
                     req_body['model'],
                     req_body['data'],
@@ -126,7 +127,7 @@ class CreateModelHandler(RequestHandler):
             print(req_body)
             process = subprocess.Popen(
                 [
-                    'python3',
+                    python_comm,
                     "create_model.py",
                     req_body['model_name'],
                     req_body['num_features'],
