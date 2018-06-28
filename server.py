@@ -6,19 +6,17 @@ from tornado.web import RequestHandler, Application
 from tornado import httpserver, ioloop
 import socket
 import subprocess
-from config import python_comm, output_path, model_path
+from config import python_comm, output_path, model_path, data_path
 
 clients = dict()
 port = 8888
 host = 'localhost'
 
-'''rabbit MQ codes'''
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 MODEL_DIR = os.path.join(BASE_DIR, model_path)
-DATA_DIR = os.path.join(BASE_DIR, 'data')
+DATA_DIR = os.path.join(BASE_DIR, data_path)
 CURRENT_PROCESS = -1
 
-message_global = ""
 
 '''web socket codes'''
 active_clients = set()
